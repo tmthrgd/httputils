@@ -27,13 +27,13 @@ func TCPKeepAliveListener(ln net.Listener, period time.Duration) net.Listener {
 }
 
 type tcpKeepAliveListener struct {
-	*net.TCPListener
+	ln *net.TCPListener
 
 	period time.Duration
 }
 
 func (ln *tcpKeepAliveListener) Accept() (net.Conn, error) {
-	tc, err := ln.AcceptTCP()
+	tc, err := ln.ln.AcceptTCP()
 	if err != nil {
 		return nil, err
 	}
@@ -41,4 +41,12 @@ func (ln *tcpKeepAliveListener) Accept() (net.Conn, error) {
 	tc.SetKeepAlive(true)
 	tc.SetKeepAlivePeriod(ln.period)
 	return tc, nil
+}
+
+func (ln *tcpKeepAliveListener) Close() error {
+	return ln.ln.Close()
+}
+
+func (ln *tcpKeepAliveListener) Addr() net.Addr {
+	return ln.ln.Addr()
 }
