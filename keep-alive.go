@@ -12,7 +12,8 @@ import (
 // TCPKeepAliveListener sets TCP keep-alive timeouts on accepted
 // connections.
 //
-// If period is zero, it defaults to three minutes.
+// ln must be a *net.TCPListener. If period is zero, it defaults
+// to three minutes.
 //
 // It is an unexported net/http type that is used by
 // net/http.ListenAndServe and net/http.ListenAndServeTLS so dead
