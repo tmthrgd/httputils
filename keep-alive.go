@@ -12,19 +12,18 @@ import (
 // TCPKeepAliveListener sets TCP keep-alive timeouts on accepted
 // connections.
 //
-// ln must be a *net.TCPListener. If period is zero, it defaults
-// to three minutes.
+// If period is zero, it defaults to three minutes.
 //
 // It is an unexported net/http type that is used by
 // net/http.ListenAndServe and net/http.ListenAndServeTLS so dead
 // TCP connections (e.g. closing laptop mid-download) eventually
 // go away.
-func TCPKeepAliveListener(ln net.Listener, period time.Duration) net.Listener {
+func TCPKeepAliveListener(ln *net.TCPListener, period time.Duration) net.Listener {
 	if period == 0 {
 		period = 3 * time.Minute
 	}
 
-	return &tcpKeepAliveListener{ln.(*net.TCPListener), period}
+	return &tcpKeepAliveListener{ln, period}
 }
 
 type tcpKeepAliveListener struct {
