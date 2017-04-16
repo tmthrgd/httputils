@@ -13,11 +13,13 @@ import (
 )
 
 // TLSHandshakeFunc is a function to be called after a TLS handshake
-// has been performed. It takes a *tls.ConnectionState and any error
-// returned from (*tls.Conn).Handshake.
+// has been performed. It takes the underlying net.Conn, a
+// *tls.ConnectionState and any error returned from
+// (*tls.Conn).Handshake.
 //
-// cs will never be nil.
-type TLSHandshakeFunc func(cs *tls.ConnectionState, err error)
+// conn MUST NOT be written to or read from, doing so will
+// cause the connection to fail. cs will never be nil.
+type TLSHandshakeFunc func(conn net.Conn, cs *tls.ConnectionState, err error)
 
 // TLSHandshakeListener wraps a given net.Listener. On calls to Accept
 // it performs the TLS handshake and subsequently invokes fn.
@@ -68,6 +70,6 @@ func (ln *tlsHandshakeListener) Accept() (net.Conn, error) {
 
 	err = tc.Handshake()
 	cs := tc.ConnectionState()
-	ln.fn(&cs, err)
+	ln.fn(c, &cs, err)
 	return c, nil
 }
