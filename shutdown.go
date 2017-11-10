@@ -8,34 +8,24 @@ package httputils
 import (
 	"context"
 	"net/http"
-	"sync"
+
+	"golang.org/x/sync/errgroup"
 )
 
 // Shutdown gracefully shutsdown several http.Server's.
 func Shutdown(ctx context.Context, srvs ...*http.Server) error {
-	var wg sync.WaitGroup
-	errs := make([]error, len(srvs))
+	var eg errgroup.Group
 
-	for i, srv := range srvs {
+	for _, srv := range srvs {
 		if srv == nil {
 			continue
 		}
 
-		wg.Add(1)
-
-		go func(srv *http.Server, err *error) {
-			defer wg.Done()
-			*err = srv.Shutdown(ctx)
-		}(srv, &errs[i])
+		srv := srv
+		eg.Go(func() error {
+			return srv.Shutdown(ctx)
+		})
 	}
 
-	wg.Wait()
-
-	for _, err := range errs {
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return eg.Wait()
 }
