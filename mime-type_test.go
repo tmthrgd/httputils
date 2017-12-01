@@ -18,10 +18,32 @@ func TestMIMETypeMatches(t *testing.T) {
 	}{
 		{"application/example+json; charset=utf-8", []string{"application/example+json"}},
 		{"application/example+json;charset=utf-8", []string{"application/example+json"}},
+		{"application/example+json ;charset-utf-8", []string{"application/example+json"}},
 		{"application/example+json", []string{"application/example+json"}},
 		{"application/example", []string{"application/example"}},
+		{"application/example ", []string{"application/example"}},
+		{" application/example", []string{"application/example"}},
 		{"application/example", []string{"application/*"}},
 		{"application/example", []string{"*/*"}},
+
+		{"application/Example+json; charset=utf-8", []string{"application/example+json"}},
+		{"application/Example+json;charset=utf-8", []string{"application/example+json"}},
+		{"application/Example+json ;charset-utf-8", []string{"application/example+json"}},
+		{"application/Example+json", []string{"application/example+json"}},
+		{"application/Example", []string{"application/example"}},
+		{"application/Example ", []string{"application/example"}},
+		{" application/Example", []string{"application/example"}},
+		{"application/Example", []string{"application/*"}},
+		{"application/Example", []string{"*/*"}},
+
+		{"application/example+json; charset=utf-8", []string{"application/Example+json"}},
+		{"application/example+json;charset=utf-8", []string{"application/Example+json"}},
+		{"application/example+json ;charset-utf-8", []string{"application/Example+json"}},
+		{"application/example+json", []string{"application/Example+json"}},
+		{"application/example", []string{"application/Example"}},
+		{"application/example ", []string{"application/Example"}},
+		{" application/example", []string{"application/Example"}},
+		{"application/example", []string{"Application/*"}},
 	} {
 		assert.True(t, MIMETypeMatches(tt.mime, tt.types), "%q", tt)
 	}
@@ -31,7 +53,6 @@ func TestMIMETypeMatches(t *testing.T) {
 		types []string
 	}{
 		{"application/example; charset-utf-8", []string{"application/example; charset=utf-8"}},
-		{"application/example ;charset-utf-8", []string{"application/example"}}, // ?
 		{"application/example", []string{"application/example; charset=utf-8"}},
 		{"application/example", []string{"application/example+json"}},
 		{"application/example+json", []string{"application/example"}},
@@ -40,8 +61,6 @@ func TestMIMETypeMatches(t *testing.T) {
 		{"", []string{""}},
 		{"application/example", []string{}},
 		{"application/example", nil},
-		{"application/example ", []string{"application/example"}}, // ?
-		{" application/example", []string{"application/example"}}, // ?
 		{"application/example", []string{" application/example"}},
 		{"application/example", []string{"application/example "}},
 	} {

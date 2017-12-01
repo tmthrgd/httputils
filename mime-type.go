@@ -10,7 +10,7 @@ import "strings"
 // MIMETypeMatches returns whether a MIME type is found
 // within a given list.
 //
-// MIME types are compared in a case-sensitive manner.
+// MIME types are compared in a case-insensitive manner.
 //
 // A MIME type without any subtype will match any more
 // precise MIME type, i.e. image/* will match image/png,
@@ -30,9 +30,9 @@ func MIMETypeMatches(mime string, types []string) bool {
 		mime = mime[:i]
 	}
 
-	// Should we trim whitespace from mime or expect it
-	// to be well formed?
-	//	mime = strings.TrimSpace(mime)
+	// According to RFC 7231, OWS may only occur on the
+	// right side of mime, but trim from both anyway.
+	mime = trimOWS(mime)
 
 	// An empty string can't match anything.
 	if mime == "" {
@@ -41,7 +41,7 @@ func MIMETypeMatches(mime string, types []string) bool {
 
 	for _, typ := range types {
 		// An exact match.
-		if typ == mime {
+		if tokenEqual(typ, mime) {
 			return true
 		}
 
@@ -51,8 +51,9 @@ func MIMETypeMatches(mime string, types []string) bool {
 		}
 
 		// A MIME type, but without any subtype.
-		if strings.HasSuffix(typ, "/*") &&
-			strings.HasPrefix(mime, typ[:len(typ)-1]) {
+		if lt := len(typ) - 1; len(mime) >= lt &&
+			strings.HasSuffix(typ, "/*") &&
+			tokenEqual(mime[:lt], typ[:lt]) {
 			return true
 		}
 	}
