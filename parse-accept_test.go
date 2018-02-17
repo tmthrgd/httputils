@@ -33,6 +33,8 @@ var parseAcceptTests = []struct {
 	{"image/png, image/*;q=0.5", []acceptSpec{{"image/png", 1}, {"image/*", 0.5}}},
 	{"text/html; Q=1", []acceptSpec{{"text/html", 1}}},
 	{"text/html; q=0.123", []acceptSpec{{"text/html", 0.123}}},
+	{" text/html", []acceptSpec{{"text/html", 1}}},
+	{"text/html ", []acceptSpec{{"text/html", 1}}},
 
 	// bad cases
 	{"value1; q=0.1.2", []acceptSpec{{"value1", 0.1}}},

@@ -69,12 +69,11 @@ func TestNegotiate(t *testing.T) {
 			[]string{"application/example", "application/xml"},
 			"application/xml",
 		},
-		// TODO: fix leading whitespace
-		//{
-		//	[]string{" text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8"},
-		//	[]string{"application/example", "application/xml", "text/html", "application/xhtml+xml"},
-		//	"text/html",
-		//},
+		{
+			[]string{" text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8"},
+			[]string{"application/example", "application/xml", "text/html", "application/xhtml+xml"},
+			"text/html",
+		},
 		{
 			nil,
 			[]string{"application/example"},

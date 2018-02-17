@@ -19,6 +19,7 @@ type acceptSpec struct {
 func parseAccept(header http.Header, key string) (specs []acceptSpec) {
 loop:
 	for _, s := range header[http.CanonicalHeaderKey(key)] {
+		s = trimOWS(s)
 		for {
 			var spec acceptSpec
 			spec.Value, s = expectTokenSlash(s)
